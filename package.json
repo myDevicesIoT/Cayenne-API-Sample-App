@@ -1,0 +1,34 @@
+{
+  "name": "tankmonitor",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "16.0.0-alpha.6",
+    "react-native": "0.44.0",
+    "react-native-deep-linking": "2.1.0",
+    "react-native-dotenv": "0.0.4",
+    "react-native-hr": "^1.1.3",
+    "react-native-mqtt": "github:rusfearuth/react-native-mqtt",
+    "react-native-paho-mqtt": "0.0.8",
+    "react-native-svg-uri": "^1.2.0",
+    "react-native-vector-icons": "^4.2.0",
+    "react-navigation": "^1.0.0-beta.9"
+  },
+  "devDependencies": {
+    "babel-jest": "20.0.3",
+    "babel-preset-react-native": "1.9.2",
+    "jest": "20.0.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "resources/fonts"
+    ]
+  }
+}
