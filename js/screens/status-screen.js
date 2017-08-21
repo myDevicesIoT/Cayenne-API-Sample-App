@@ -44,6 +44,11 @@ class Status extends Component {
         })
     }
 
+    /**
+     * Deletes a specified thing by its thingId
+     * 
+     * @param {String} thingId
+     */
     deleteThing = (thingId) => {
         var vm = this;
         PlatformService.deleteThing(thingId).then(function(response) {
@@ -57,7 +62,7 @@ class Status extends Component {
         if (_.isEmpty(sensors)) return;
         var sensorList = sensors.map(function(sensor) {
             return (
-                <TouchableOpacity activeOpacity = {0.8} style={{flex: 0.20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 15, borderRadius: 5, backgroundColor: '#405159'}} onPress = {() => {vm.deleteThing(sensor.id)}}>
+                <TouchableOpacity activeOpacity = {0.8} style={{flex: 0.20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 15, borderRadius: 5, backgroundColor: '#405159'}}>
                         <View style={{flex: 0.40, justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}}>
                             <Text style={{color: 'white'}}>{sensor.name}</Text>
                         </View>
