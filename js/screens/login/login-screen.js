@@ -42,8 +42,8 @@ class LoginScreen extends Component{
     constructor(){
         super();
         this.state = {
-            username: 'asanchezdelc@mydevices.com',
-            password: 'Password1',
+            username: '',
+            password: '',
             modalVisible: false
         };
         this.cayenneLogin = _.debounce(this.cayenneLogin.bind(this));
