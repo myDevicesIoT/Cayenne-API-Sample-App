@@ -1,7 +1,8 @@
 import settings from '../config/settings';
-import session from '../config/session';
+import StorageService from './storage.service';
 import StreamingService from './streaming.service';
 import PlatformService from './platform.service';
+import HttpService from './auth.interceptor';
 
 export default class HistoryService{
 
@@ -10,19 +11,19 @@ export default class HistoryService{
      * 
      * @returns {*}
      */
-    static getHeaders() {
+    static async getHeaders() {
         return {
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${await StorageService.get('access_token')}`
         }
     }
 
-    static getState(deviceId){
+    static async getState(deviceId){
         var url = settings.historyHost + deviceId + '/state';
-        return fetch(
+        return HttpService.request(
             url,            
             {
                 method: 'GET',
-                headers: this.getHeaders()
+                headers: await this.getHeaders()
             })
             .then(function(response){
                 return Promise.all([

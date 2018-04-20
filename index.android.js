@@ -1,9 +1,10 @@
 import {
     AppRegistry
 } from 'react-native';
-import {
-    StackNavigator
-} from 'react-navigation';
-import ROUTES from './js/routes/router';
+import App from './app';
+//import NavigatorService from './js/lib/navigation.service';
 
-AppRegistry.registerComponent('CayenneSampleApp', () => ROUTES);
+AppRegistry.registerComponent(
+    'CayenneSampleApp', 
+    () => App
+);

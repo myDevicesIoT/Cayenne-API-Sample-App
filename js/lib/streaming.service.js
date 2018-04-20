@@ -1,5 +1,5 @@
 import settings from '../config/settings';
-import session from '../config/session';
+import StorageService from '../lib/storage.service';
 
 export default class StreamingService{
     static _instance = null;
@@ -10,8 +10,8 @@ export default class StreamingService{
         this.init();
     }
 
-    init(){
-        var url = settings.streamingHost + `?token=${session.access_token}&transport=websocket`;
+    async init(){
+        var url = settings.streamingHost + `?token=${await StorageService.get('access_token')}&transport=websocket`;
         url=url.replace('https', 'wss');
         var ws = new WebSocket(url);
 

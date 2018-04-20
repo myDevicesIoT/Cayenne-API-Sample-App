@@ -11,6 +11,7 @@ import SensorSetup from './sensor-setup';
 import Status from './status-screen';
 import Alerts from './alerts';
 import SensorMap from './sensor-map';
+import Splash from './splash';
 
 export default SCREENS = {
     ForgotPassword: ForgotPassword,
@@ -21,5 +22,6 @@ export default SCREENS = {
     Alerts: Alerts,
     SensorMap: SensorMap,
     CreateName: CreateName,
-    CreateEmail: CreateEmail
+    CreateEmail: CreateEmail,
+    Splash : Splash
 }
