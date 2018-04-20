@@ -29,7 +29,7 @@ class Status extends Component {
     constructor() {
         super();
         this.state = {
-            sensors: {}
+            devices: {}
         }
         this.getThings = this.getThings.bind(this);
         this.deleteThing = this.deleteThing.bind(this);
@@ -41,7 +41,7 @@ class Status extends Component {
 
         PlatformService.getThings().then(function(response) {
             if (response.statusCode >= 400) return;
-            if (!_.isEmpty(response)) vm.setState({sensors: response});
+            if (!_.isEmpty(response)) vm.setState({devices: response});
         })
     }
 
@@ -57,13 +57,13 @@ class Status extends Component {
         });
     }
 
-    thingList = () => {
+    deviceList = () => {
         var vm = this;
-        let { sensors } = this.state;
-        if (_.isEmpty(sensors)) return;
-        var sensorList = sensors.map(function(sensor, i) {
+        let { devices } = this.state;
+        if (_.isEmpty(devices)) return;
+        var sensorList = devices.map(function(device, i) {
             return (
-                <Device device={sensor} key={i} sensors={sensor.children} />
+                <Device device={device} key={i} sensors={device.children} />
             );
         });
         return sensorList;
@@ -76,7 +76,7 @@ class Status extends Component {
                 <Header title='STATUS' navigation={this.props.navigation} visible={true} onPress = {() => navigate('GatewaySetup')}/>
                 <ScrollView style={{flex: 0.85}}>
                     <View style={{ flex: 1}}>
-                        {this.thingList()}
+                        {this.deviceList()}
                     </View>
                 </ScrollView>
                 <Footer navigation={this.props.navigation}/>
