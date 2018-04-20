@@ -9,7 +9,8 @@ var Service = {
     pairGateway: pairGateway,
     addThing: addThing,
     createClient: createClient,
-    deleteThing: deleteThing
+    deleteThing: deleteThing,
+    getDataTypes: dataTypes
 }
 
 /**
@@ -46,10 +47,7 @@ function getThings() {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -70,10 +68,7 @@ function pairGateway(gatewayName, gatewayId) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -90,10 +85,7 @@ function addThing(thing) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -108,10 +100,7 @@ function createClient() {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -126,10 +115,17 @@ function deleteThing(thingId) {
     })
     .then((response) => {
         return response.json();
+    });
+}
+
+function dataTypes(){
+    return fetch(getHost() + `ui/datatypes`, {
+        method: 'GET',
+        headers: getHeaders()
     })
-    .catch((error) => {
-        throw error;
-    })
+    .then((response) => {
+        return response.json();
+    });
 }
 
 export default Service;
