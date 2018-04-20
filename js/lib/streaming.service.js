@@ -1,5 +1,6 @@
 import settings from '../config/settings';
 import StorageService from '../lib/storage.service';
+import UtilsService from './utils.service';
 
 export default class StreamingService{
     static _instance = null;
@@ -25,15 +26,6 @@ export default class StreamingService{
         ws.onclose = this.init.bind(this);
     }
 
-    guid() {
-        function s4() {
-          return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-    }
-
     notify(event){
         if(event.data){
             var index = event.data.indexOf('[');
@@ -54,7 +46,7 @@ export default class StreamingService{
 
 
     subscribe(topic, deviceId, channel, cb){
-        var subscriberId = this.guid();
+        var subscriberId = UtilsService.guid();
         if(!this._subscribers[topic + deviceId + channel]){
             this._subscribers[topic + deviceId + channel] = [];
         }
