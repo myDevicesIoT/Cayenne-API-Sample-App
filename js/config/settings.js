@@ -5,7 +5,9 @@ import {
     AUTH_HOST,
     IMPLICIT_REDIRECT_URI,
     EXPLICIT_REDIRECT_URI,
-    API_HOST
+    API_HOST,
+    STREAMING_HOST,
+    HISTORY_HOST
 } from 'react-native-dotenv';
 
 const settings = {
@@ -16,7 +18,9 @@ const settings = {
     getExplicitLogin: getExplicitLogin,
     guid: guid,
     apiHost: API_HOST,
-    explicitUrl: EXPLICIT_REDIRECT_URI
+    explicitUrl: EXPLICIT_REDIRECT_URI,
+    streamingHost: STREAMING_HOST,
+    historyHost: HISTORY_HOST
 }
 
 
