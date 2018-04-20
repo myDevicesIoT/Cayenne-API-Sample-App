@@ -47,7 +47,7 @@ First you must retrieve an authorization token to modify your application which 
 ```
 
 Example `POST` curl call:
-`curl -X POST -H 'Content-Type: application/json' 'https://auth.mydevices.com/users' -d '{"grant_type": "password", "email": "YOUR EMAIL", "password": "YOUR PASSWORD"}'`
+`curl -X POST -H 'Content-Type: application/json' 'https://auth.mydevices.com/oauth/token' -d '{"grant_type": "password", "email": "YOUR EMAIL", "password": "YOUR PASSWORD"}'`
 
 A successful response will return the following:
 ```
