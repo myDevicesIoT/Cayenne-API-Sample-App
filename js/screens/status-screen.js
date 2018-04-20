@@ -14,7 +14,8 @@ import {
     TextBox,
     CommonStyles,
     Footer,
-    Header
+    Header,
+    Device
 } from './../components/index';
 import {
     PlatformService
@@ -53,32 +54,16 @@ class Status extends Component {
         var vm = this;
         PlatformService.deleteThing(thingId).then(function(response) {
             console.log('Deleted!');
-        })
+        });
     }
 
     thingList = () => {
         var vm = this;
         let { sensors } = this.state;
         if (_.isEmpty(sensors)) return;
-        var sensorList = sensors.map(function(sensor) {
+        var sensorList = sensors.map(function(sensor, i) {
             return (
-                <TouchableOpacity activeOpacity = {0.8} style={{flex: 0.20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 5, padding: 15, borderRadius: 5, backgroundColor: '#405159'}}>
-                        <View style={{flex: 0.40, justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}}>
-                            <Text style={{color: 'white'}}>{sensor.name}</Text>
-                        </View>
-                        <View style={{flex: 0.20, justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}}>
-                            <Text style={{color: 'white', fontSize: 11}}>LEVEL:</Text>
-                            {/*<Text style={{color: 'white', fontSize: 15}}>35%</Text>*/}
-                        </View>
-                        <View style={{flex: 0.20, justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}}>
-                            <Text style={{color: 'white', fontSize: 11}}>SIGNAL:</Text>
-                            {/*<Icon name="signal" size={15} color="#FFF"> 90%</Icon>*/}
-                        </View>
-                        <View style={{flex: 0.20, justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}}>
-                            <Text style={{color: 'white', fontSize: 11}}>BATTERY:</Text>
-                            {/*<Icon name="battery-4" size={15} color="#FFF"> 87%</Icon>*/}
-                        </View>
-                </TouchableOpacity>
+                <Device device={sensor} key={i} sensors={sensor.children} />
             );
         });
         return sensorList;
