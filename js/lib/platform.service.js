@@ -96,7 +96,7 @@ async function addThing(thing) {
  * @returns {*}
  */
 async function createClient() {
-    return fetch(getHost() + 'clients', {
+    return HttpService.request(getHost() + 'clients', {
         method: 'POST',
         headers: await getHeaders()
     })
