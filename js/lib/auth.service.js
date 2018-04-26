@@ -1,8 +1,10 @@
 import settings from '../config/settings';
+import StorageService from './storage.service';
 
 // Methods
 var Service = {
     getToken: getToken,
+    refreshToken: refreshToken,
     forgotPassword: forgotPassword,
     getOauth: getOauth,
     createUser: createUser
@@ -29,6 +31,12 @@ function getHeaders() {
     }
 }
 
+function handleAuthResponse(data){
+    StorageService.set('access_token', data.access_token);
+    StorageService.set('refresh_token', data.refresh_token);
+    return data;
+}
+
 /**
  * Requests an oauth token using email/password
  * 
@@ -46,11 +54,27 @@ function getToken(email, password) {
         })
     })
     .then((response) => {
-        return response.json();
+        return response.json().then(handleAuthResponse);
+    });
+}
+
+function refreshToken(){
+    var refresh_token = StorageService.get('refresh_token');
+    if(!refresh_token) {
+        return Promise.reject('no refresh token');
+    }
+
+    return fetch(getHost() + 'oauth/token', {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+            grant_type: 'refresh_token',
+            refresh_token: refresh_token
+        })
     })
-    .catch((error) => {
-        throw error;
-    })
+    .then((response) => {
+        return response.json().then(handleAuthResponse);
+    });
 }
 
 /**
@@ -72,10 +96,7 @@ function getOauth(authCode) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -93,10 +114,7 @@ function forgotPassword(email) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -121,9 +139,6 @@ function createUser(email, password, firstName, lastName) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
     });
 }
 

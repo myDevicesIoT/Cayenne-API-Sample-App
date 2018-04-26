@@ -1,5 +1,6 @@
 import settings from '../config/settings';
-import session from '../config/session';
+import StorageService from './storage.service';
+import HttpService from './auth.interceptor';
 
 /**
  * Public methods
@@ -9,7 +10,8 @@ var Service = {
     pairGateway: pairGateway,
     addThing: addThing,
     createClient: createClient,
-    deleteThing: deleteThing
+    deleteThing: deleteThing,
+    getDataTypes: dataTypes
 }
 
 /**
@@ -26,11 +28,12 @@ function getHost() {
  * 
  * @returns {*}
  */
-function getHeaders() {
+async function getHeaders() {
+    
     return {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
+        'Authorization': `Bearer ${await StorageService.get('access_token')}`
     }
 }
 
@@ -39,17 +42,14 @@ function getHeaders() {
  * 
  * @returns {*}
  */
-function getThings() {
-    return fetch(getHost() + 'things', {
+async function getThings() {
+    return HttpService.request(getHost() + 'things', {
         method: 'GET',
-        headers: getHeaders()
+        headers: await getHeaders()
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -59,10 +59,10 @@ function getThings() {
  * @param {String} gatewayId
  * @returns {*}
  */
-function pairGateway(gatewayName, gatewayId) {
-    return fetch(getHost() + 'things/pair', {
+async function pairGateway(gatewayName, gatewayId) {
+    return HttpService.request(getHost() + 'things/pair', {
         method: 'POST',
-        headers: getHeaders(),
+        headers: await getHeaders(),
         body: JSON.stringify({
             hardware_id: gatewayId,
             name: gatewayName
@@ -70,10 +70,7 @@ function pairGateway(gatewayName, gatewayId) {
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -82,18 +79,15 @@ function pairGateway(gatewayName, gatewayId) {
  * @param {String} thing
  * @returns {*}
  */
-function addThing(thing) {
-    return fetch(getHost() + 'things', {
+async function addThing(thing) {
+    return HttpService.request(getHost() + 'things', {
         method: 'POST',
-        headers: getHeaders(),
+        headers: await getHeaders(),
         body: JSON.stringify(thing)
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -101,17 +95,14 @@ function addThing(thing) {
  * 
  * @returns {*}
  */
-function createClient() {
-    return fetch(getHost() + 'clients', {
+async function createClient() {
+    return HttpService.request(getHost() + 'clients', {
         method: 'POST',
-        headers: getHeaders()
+        headers: await getHeaders()
     })
     .then((response) => {
         return response.json();
-    })
-    .catch((error) => {
-        throw error;
-    })
+    });
 }
 
 /**
@@ -119,17 +110,24 @@ function createClient() {
  * 
  * @param {String} thingId
  */
-function deleteThing(thingId) {
-    return fetch(getHost() + `things/${thingId}`, {
+async function deleteThing(thingId) {
+    return HttpService.request(getHost() + `things/${thingId}`, {
         method: 'DELETE',
-        headers: getHeaders()
+        headers: await getHeaders()
     })
     .then((response) => {
         return response.json();
+    });
+}
+
+async function dataTypes(){
+    return HttpService.request(getHost() + `ui/datatypes`, {
+        method: 'GET',
+        headers: await getHeaders()
     })
-    .catch((error) => {
-        throw error;
-    })
+    .then((response) => {
+        return response.json();
+    });
 }
 
 export default Service;
