@@ -19,7 +19,8 @@ import {
 } from './../../config/index';
 import {
   AuthService,
-  PlatformService
+  PlatformService,
+  StorageService
 } from './../../lib/index';
 import {
   Session
@@ -61,8 +62,8 @@ class CreateEmail extends Component {
 
       PlatformService.createClient().then(function(response) {
         if (response.statusCode >= 400) return alert('Unable to create client');
-        Session.mqqt_id = response.id;
-        Session.mqqt_secret = response.clear_secret;
+        StorageService.set('mqqt_id', response.id);
+        StorageService.set('mqqt_secret', response.clear_secret);
 
         return navigate('GatewaySetup')
       });

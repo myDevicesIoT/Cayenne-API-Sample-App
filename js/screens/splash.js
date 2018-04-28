@@ -23,6 +23,7 @@ class Splash extends Component {
 
     async componentDidMount() {
         var token = await StorageService.get('access_token');
+        var mqqt_id = await StorageService.get('mqqt_id');
         const { navigate } = this.props.navigation;
         if(token === null){
             this.props.navigation.navigate('CreateName');
@@ -30,6 +31,14 @@ class Splash extends Component {
         }else{
             PlatformService.getThings().then(function(response) {
                 if (response.statusCode >= 400) return;
+                
+                if(mqqt_id === null){
+                    PlatformService.createClient().then(function(response) {
+                        if (_.isEmpty(response)) return;
+                        StorageService.set('mqqt_id', response.id);
+                        StorageService.set('mqqt_secret', response.clear_secret);
+                    });
+                }
                 
                 if (_.isEmpty(response)) return navigate('SensorSetup');
                 return navigate('Status');
