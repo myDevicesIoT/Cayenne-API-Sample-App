@@ -73,7 +73,7 @@ class Status extends Component {
         const {navigate} = this.props.navigation;
         return (
             <View style={[CommonStyles.background, {flex: 1}]}>
-                <Header title='STATUS' navigation={this.props.navigation} visible={true} onPress = {() => navigate('GatewaySetup')}/>
+                <Header title='STATUS' navigation={this.props.navigation} visible={true} onPress = {() => navigate('SensorSetup')}/>
                 <ScrollView style={{flex: 0.85}}>
                     <View style={{ flex: 1}}>
                         {this.deviceList()}
