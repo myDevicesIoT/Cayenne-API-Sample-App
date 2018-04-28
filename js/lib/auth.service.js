@@ -50,6 +50,8 @@ function getToken(email, password) {
         body: JSON.stringify({
             email: email,
             password: password,
+            client_id: settings.appKey,
+            client_secret: settings.appSecret,
             grant_type: 'password',
         })
     })
@@ -73,6 +75,7 @@ function refreshToken(){
         })
     })
     .then((response) => {
+        if(response.status !== 200) throw new Error("refresh failed");
         return response.json().then(handleAuthResponse);
     });
 }
@@ -95,7 +98,7 @@ function getOauth(authCode) {
         })
     })
     .then((response) => {
-        return response.json();
+        return response.json().then(handleAuthResponse);
     });
 }
 
