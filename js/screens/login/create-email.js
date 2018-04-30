@@ -57,15 +57,17 @@ class CreateEmail extends Component {
         return alert(response.message);
       }
 
-      Session.access_token = response.access_token;
-      Session.refresh_token = response.refresh_token;
+      StorageService.set('access_token', response.access_token);
+      StorageService.set('refresh_token', response.refresh_token);
 
-      PlatformService.createClient().then(function(response) {
-        if (response.statusCode >= 400) return alert('Unable to create client');
-        StorageService.set('mqqt_id', response.id);
-        StorageService.set('mqqt_secret', response.clear_secret);
-
-        return navigate('GatewaySetup')
+      AuthService.getUser().then((user) => {
+        PlatformService.createClient().then(function(response) {
+          if (response.statusCode >= 400) return alert('Unable to create client');
+          StorageService.set('mqtt_id', response.id);
+          StorageService.set('mqtt_secret', response.clear_secret);
+  
+          return navigate('GatewaySetup')
+        });
       });
     }).catch(function(error) {
       alert(error.message);

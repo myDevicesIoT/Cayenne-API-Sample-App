@@ -128,10 +128,13 @@ async function addThing(thing) {
  * 
  * @returns {*}
  */
-async function createClient() {
+async function createClient(userId) {
     return HttpService.request(getHost() + 'clients', {
         method: 'POST',
-        headers: await getHeaders()
+        headers: await getHeaders(),
+        body: JSON.stringify({
+            user_id: userId
+        })
     })
     .then((response) => {
         return response.json();
