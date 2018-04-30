@@ -19,7 +19,7 @@ import {
   Header
 } from './../components/index';
 import {
-  PlatformService
+  PlatformService, AuthService
 } from './../lib/index';
 import { 
   Images
@@ -65,8 +65,9 @@ class SensorSetup extends Component {
 
     let thing = {};
     thing.name = sensorName;
-    thing.device_type_id = this.state.sensorType.id;
+    thing.device_type_id = this.state.sensorType;
     thing.hardware_id = hardwareId;
+    
 
     thing.properties = {
       codec: this.state.sensorType.codec,
@@ -81,28 +82,32 @@ class SensorSetup extends Component {
     thing.active = 1;
     thing.status = 'ACTIVATED';
 
-    Promise.all([
-      PlatformService.addThing(thing),
-      PlatformService.getTypeChannels(this.state.sensorType.id)
-    ]).then((result) => {
-      let deviceId = result[0].id;
-      promises = _.map(result[1], function(channel){
-        return PlatformService.addThing({
-          name: channel.name,
-          parent_id: deviceId,
-          active: 1,
-          status: 'ACTIVATED',
-          device_type_id: channel.device_type_id,
-          properties: {
-            channel: channel.channel
-          }
+    AuthService.getUser().then((user) => {
+        thing.user_id = user.id;
+    }).then(() => {
+      return Promise.all([
+        PlatformService.addThing(thing),
+        PlatformService.getTypeChannels(this.state.sensorType)
+      ]).then((result) => {
+        let deviceId = result[0].id;
+        promises = _.map(result[1], function(channel){
+          return PlatformService.addThing({
+            name: channel.name,
+            parent_id: deviceId,
+            active: 1,
+            status: 'ACTIVATED',
+            device_type_id: '8f93f0f0-db59-44c1-aaa4-bd48707de97b',
+            properties: {
+              channel: channel.channel
+            }
+          });
+        });
+  
+        return Promise.all(promises).then(() => {
+          return navigate('Status');
         });
       });
-
-      return Promise.all(promises).then(() => {
-        return navigate('Status');
-      });
-    });
+    })
   }
 
   handleInstruction = () => {
