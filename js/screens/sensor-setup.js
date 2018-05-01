@@ -22,7 +22,8 @@ import {
   PlatformService, AuthService
 } from './../lib/index';
 import {
-  Settings
+  Settings,
+  Images
 } from './../config/index.js';
 
 import _ from 'lodash';
