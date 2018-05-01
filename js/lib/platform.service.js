@@ -11,7 +11,9 @@ var Service = {
     addThing: addThing,
     createClient: createClient,
     deleteThing: deleteThing,
-    getDataTypes: dataTypes
+    getDataTypes: dataTypes,
+    getThingsTypes: getThingsTypes,
+    getTypeChannels: getTypeChannels
 }
 
 /**
@@ -51,6 +53,37 @@ async function getThings() {
         return response.json();
     });
 }
+
+/**
+ * Get things types 
+ * 
+ * @returns {*}
+ */
+async function getThingsTypes() {
+    return HttpService.request(getHost() + 'things/types', {
+        method: 'GET',
+        headers: await getHeaders()
+    })
+    .then((response) => {
+        return response.json();
+    });
+}
+
+/**
+ * Get things types 
+ * 
+ * @returns {*}
+ */
+async function getTypeChannels(typeId) {
+    return HttpService.request(getHost() + `things/types/${typeId}/channels`, {
+        method: 'GET',
+        headers: await getHeaders()
+    })
+    .then((response) => {
+        return response.json();
+    });
+}
+
 
 /**
  * Pair a gateway
@@ -95,10 +128,13 @@ async function addThing(thing) {
  * 
  * @returns {*}
  */
-async function createClient() {
+async function createClient(userId) {
     return HttpService.request(getHost() + 'clients', {
         method: 'POST',
-        headers: await getHeaders()
+        headers: await getHeaders(),
+        body: JSON.stringify({
+            user_id: userId
+        })
     })
     .then((response) => {
         return response.json();

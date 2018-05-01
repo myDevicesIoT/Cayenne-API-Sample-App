@@ -24,7 +24,8 @@ import {
 } from './../../components/index';
 import {
     AuthService,
-    PlatformService
+    PlatformService,
+    StorageService
 } from './../../lib/index';
 import {
     Session,
@@ -56,53 +57,20 @@ class LoginScreen extends Component{
     componentDidMount() {
         if (Platform.OS === 'android') {
             Linking.getInitialURL().then(url => {
-                this.navigate(url);
+                //this.navigate(url);
             });
         } else Linking.addEventListener('url', this.handleOpenURL);
     }
 
-    componentWillUnmount() { Linking.removeEventListener('url', this.handleOpenURL); }
+    //componentWillUnmount() { Linking.removeEventListener('url', this.handleOpenURL); }
 
-    handleOpenURL = (event) => { this.navigate(event.url); }
-
-    navigate = (url) => {
-        var vm = this;
-        const { navigate } = this.props.navigation;
-        if (_.isNil(url)) return;
-        const route = url.replace(/.*?:\/\//g, '');
-
-        const routeName = route.split('/')[0];
-        // Implicit login: #
-        // Explicit login: ?
-        var loginType = (!_.isNil(routeName.match(/(.*?)#/i))) ? routeName.match(/(.*?)#/i)[1] : 'explicit';
-        var state = routeName.match(/state=(.*)/i)[1];
-
-        // Verify a matching returned state value
-        if (_.isNil(state) || state.toString() !== Settings.state) return;
-
-        if (loginType === 'implicit') {
-            Session.access_token = routeName.match(/access_token=(.*?)&/i)[1];
-            if(_.isNil(Session.access_token)) return; 
-            vm.getThings();
-        }
-        // Sample app usage only, use implicit login with mobile apps and single page applications
-        else {
-            var authCode = routeName.match(/code=(.*?)&/i)[1];
-            if(_.isNil(authCode)) return;
-            AuthService.getOauth(authCode).then(function(response) {
-                if (_.isEmpty(response)) return;
-                Session.access_token = response.access_token;
-                Session.refresh_token = response.refresh_token;
-                vm.getThings();
-            });
-        }
-    }
+    //handleOpenURL = (event) => { this.props.navigation(event.url); }
 
     /**
      * Cayenne API Login using app id
      * This will redirect to the authorization page and will use the redirect link provdided
      */
-    cayenneApi =(loginType) => {
+    cayenneApi = (loginType) => {
         Settings.state = Settings.guid();
         var loginUrl = (loginType === 'implicit') ? Settings.getImplicitLogin() : Settings.getExplicitLogin();
         Linking.openURL(loginUrl)
@@ -125,8 +93,6 @@ class LoginScreen extends Component{
                 vm.setState({ modalVisible: true });
                 return;
             }
-            Session.access_token = response.access_token;
-            Session.refresh_token = response.refresh_token;
             vm.getThings();
         }).catch(function (error) {
             alert(error.message);
@@ -137,14 +103,23 @@ class LoginScreen extends Component{
         var vm = this;
         const { navigate } = this.props.navigation;
 
-        PlatformService.createClient().then(function(response) {
-            if (_.isEmpty(response)) return;
-            Session.mqqt_id = response.id;
-            Session.mqqt_secret = response.clear_secret;
-
-            PlatformService.getThings().then(function(response) {
+        StorageService.get('mqtt_id').then((mqtt_id) => {
+            if(mqtt_id === null){
+                // get the user and create the client:
+                return AuthService.getUser().then((user) => {
+                    return PlatformService.createClient(user.id).then(function(response) {
+                        if (_.isEmpty(response)) return;
+                        StorageService.set('mqtt_id', response.id);
+                        StorageService.set('mqtt_secret', response.clear_secret);
+                        return true;
+                    });
+                });
+            }
+            return Promise.resolve([]);
+        }).then(() => {
+            return PlatformService.getThings().then(function(response) {
                 if (response.statusCode >= 400) return;
-                if (_.isEmpty(response)) return navigate('GatewaySetup');
+                if (_.isEmpty(response)) return navigate('SensorSetup');
                 return navigate('Status');
             });
         });
@@ -184,30 +159,10 @@ class LoginScreen extends Component{
                                 Sign In
                         </TouchButton>
 
-                        <TouchableOpacity 
+                        {/* <TouchableOpacity 
                             onPress = {() => navigate('ForgotPassword')}
                             title = "Forgot Passord?"><Text style={CommonStyles.linkText}>Forgot password?</Text>
-                        </TouchableOpacity>
-
-                        <View style={{
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            marginTop: 10
-                        }}>
-                            <Icon.Button name="cayenne" color="#5bc0de" backgroundColor='#FFFFFF' onPress = {() => {this.cayenneApi('implicit')}}>
-                                <Text style={{fontFamily: 'Arial', fontSize: 15}}>Cayenne oAuth2 Implicit Login</Text>
-                            </Icon.Button>
-                        </View>
-
-                        <View style={{
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            marginTop: 20
-                        }}>
-                            <Icon.Button name="cayenne" color="#5bc0de" backgroundColor='#FFFFFF' onPress = {() => {this.cayenneApi('explicit')}}>
-                                <Text style={{fontFamily: 'Arial', fontSize: 15}}>Cayenne oAuth2 Explicit Login</Text>
-                            </Icon.Button>
-                        </View>
+                        </TouchableOpacity> */}
                     </View>
                     <View style={{flex:0.05}}/>
                 </Image>

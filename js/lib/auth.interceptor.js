@@ -8,7 +8,7 @@ Service = {
 function request(requestInfo, requestInit){
     return fetch(requestInfo, requestInit)
     .then((response) => {
-        if (response.statusCode === 401) {
+        if (response.status === 401) {
             // the request was reject for auth reason
             // trying to get a new token
             return AuthService.refreshToken()
@@ -19,7 +19,7 @@ function request(requestInfo, requestInit){
                 .catch(() => {
                     // failed to get a new token
                     // navigating back to login screen:
-                    NavigatorService.navigate('Login');
+                    return NavigatorService.navigate('Login');
                 });
         }
         return response;

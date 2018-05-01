@@ -5,7 +5,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Picker
 } from 'react-native';
 import {
   StackNavigator
@@ -18,7 +19,7 @@ import {
   Header
 } from './../components/index';
 import {
-  PlatformService
+  PlatformService, AuthService
 } from './../lib/index';
 import { 
   Images
@@ -35,42 +36,77 @@ class SensorSetup extends Component {
     this.state = {
       sensorName: '',
       hardwareId: '',
-      gateway: props.navigation.state.params.gateway,
-      showInstructions: false
+      sensorType: null,
+      showInstructions: false,
+      deviceTypes: []
     };
     this.instructions = ['Take sensor to walk-in cooler, freezer and food prep areas.',
                         'Peel off sticker and place in walk-in, cooler, freezer and food prep areas to monitor.'];
     this.instructionsImages = [Images.elsysSensor, Images.gatewayPlacement];
-    this.addSensor = this.addSensor.bind(this);
+    this.getThingsTypes();
+  }
+
+  getThingsTypes = () => {
+    var vm = this;
+    PlatformService.getThingsTypes().then(function(response){
+      vm.setState({deviceTypes: response.rows});
+      if(response.rows.length === 1){
+        vm.setState({sensorType: response.rows[0]});
+      }
+    });
   }
 
   addSensor = () => {
     const { navigate } = this.props.navigation;
     let {
       sensorName,
-      gateway,
       hardwareId
-    } = this.state
-
-    if (_.isNil(gateway)) return navigate('Status');
+    } = this.state;
 
     let thing = {};
     thing.name = sensorName;
-    // Some device type id
-    thing.device_type_id = 'f39b7b70-5131-11e7-b4cf-01fdf2fa57ad';
-    thing.parent_id = gateway.id;
+    thing.device_type_id = this.state.sensorType.id;
     thing.hardware_id = hardwareId;
+    
+
     thing.properties = {
-      sampleAppProp1: 'sample property',
+      codec: this.state.sensorType.codec,
       deveui: hardwareId,
-      network: 'some network'
+      network: 'ttn',
+      activation: 'activated',
+      "location.address":null,
+      "location.type":"GPS",
+      "location.lat":null,
+      "location.lon":null
     }
     thing.active = 1;
     thing.status = 'ACTIVATED';
 
-    PlatformService.addThing(thing).then(function(response) {
-      if (response.statusCode >= 400) return;
-      return navigate('Status');
+    AuthService.getUser().then((user) => {
+        thing.user_id = user.id;
+    }).then(() => {
+      return Promise.all([
+        PlatformService.addThing(thing),
+        PlatformService.getTypeChannels(this.state.sensorType.id)
+      ])
+    }).then((result) => {
+      let deviceId = result[0].id;
+      promises = _.map(result[1], function(channel){
+        return PlatformService.addThing({
+          name: channel.name,
+          parent_id: deviceId,
+          active: 1,
+          status: 'ACTIVATED',
+          device_type_id: '8f93f0f0-db59-44c1-aaa4-bd48707de97b',
+          properties: {
+            channel: channel.channel
+          }
+        });
+      });
+
+      return Promise.all(promises).then(() => {
+        return navigate('Status');
+      });
     });
   }
 
@@ -79,8 +115,30 @@ class SensorSetup extends Component {
       this.setState({showInstructions: !showInstructions});
   }
 
+  renderTextBoxes = () => {
+    if(this.state.sensorType === null) return;
+    return (
+      <View>
+        <TextBox
+          style={{height: 50}}
+          onChangeText = {(text) => this.setState({sensorName: text})}
+          placeholder='Sensor Name' />
+        <TextBox
+          style={{height: 50}}
+          onChangeText = {(text) => this.setState({hardwareId: text})} 
+          placeholder='Hardware ID' />
+      </View>
+    );
+  } 
+
   render() {
     const {navigate} = this.props.navigation;
+    var listTypes = this.state.deviceTypes.map(function(type) {
+      return (
+        <Picker.Item label={type.name} value={type} key={type.id} />
+      );
+    });
+
     return (
       <ScrollView style={[CommonStyles.background, {flex: 1}]}>
             <Header title='SET UP SENSOR' navigation={this.props.navigation} visible={false}/>
@@ -91,18 +149,17 @@ class SensorSetup extends Component {
                 instructions={this.instructions}
                 instructionsImages={this.instructionsImages}
             />
- 
+            
             <View style={{
                 flex: 0.75
             }}>
-                <TextBox
-                  style={{height: 50}}
-                  onChangeText = {(text) => this.setState({sensorName: text})}
-                  placeholder='Sensor Name' />
-                <TextBox
-                  style={{height: 50}}
-                  onChangeText = {(text) => this.setState({hardwareId: text})} 
-                  placeholder='Hardware ID' />
+                <Picker
+                  selectedValue={this.state.sensorType}
+                  style={[CommonStyles.inputField, {height: 50}]}
+                  onValueChange={(itemValue, itemIndex) => this.setState({sensorType: itemValue})}>
+                  {listTypes}
+                </Picker>
+                {this.renderTextBoxes()}
             </View>
 
             <View style={{flex:0.15}}>

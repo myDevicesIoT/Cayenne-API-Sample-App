@@ -12,6 +12,15 @@ export default StyleSheet.create({
         borderRadius: 5,
         backgroundColor:'white'
     },
+    picker: {
+        marginLeft:10,
+        marginRight:10,
+        marginTop:5,
+        marginBottom:5,
+        padding:15,
+        borderRadius: 5,
+        backgroundColor:'white'
+    },
     linkText: {
         marginTop:1,
         padding:1,

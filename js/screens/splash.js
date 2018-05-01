@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 
 import StorageService from '../lib/storage.service';
+import PlatformService from '../lib/platform.service';
+import AuthService from '../lib/auth.service';
 
 import {
     Images
@@ -12,6 +14,7 @@ import {
 import {
     CommonStyles
 } from './../components/index';
+import _ from 'lodash';
 
 class Splash extends Component {
 
@@ -21,11 +24,15 @@ class Splash extends Component {
 
     async componentDidMount() {
         var token = await StorageService.get('access_token');
+        
+        const { navigate } = this.props.navigation;
         if(token === null){
             this.props.navigation.navigate('CreateName');
-            //return <SCREENS.CreateName />;
         }else{
-            this.props.navigation.navigate('Status');
+            return PlatformService.getThings().then(function(response) {
+                if (_.isEmpty(response)) return navigate('SensorSetup');
+                return navigate('Status');
+            });
         }
     }
 
