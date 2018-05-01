@@ -66,7 +66,7 @@ class SensorSetup extends Component {
 
     let thing = {};
     thing.name = sensorName;
-    thing.device_type_id = this.state.sensorType;
+    thing.device_type_id = this.state.sensorType.id;
     thing.hardware_id = hardwareId;
     
 
