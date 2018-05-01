@@ -89,7 +89,7 @@ class SensorSetup extends Component {
       return Promise.all([
         PlatformService.addThing(thing),
         PlatformService.getTypeChannels(this.state.sensorType.id)
-      ])
+      ]);
     }).then((result) => {
       let deviceId = result[0].id;
       promises = _.map(result[1], function(channel){
