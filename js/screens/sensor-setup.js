@@ -66,7 +66,7 @@ class SensorSetup extends Component {
 
     let thing = {};
     thing.name = sensorName;
-    thing.device_type_id = this.state.sensorType.id;
+    thing.device_type_id = this.state.sensorType;
     thing.hardware_id = hardwareId;
     
 
@@ -136,7 +136,7 @@ class SensorSetup extends Component {
     const {navigate} = this.props.navigation;
     var listTypes = this.state.deviceTypes.map(function(type) {
       return (
-        <Picker.Item label={type.name} value={type} key={type.id} />
+        <Picker.Item label={type.name} value={type.name} />
       );
     });
 
@@ -155,10 +155,12 @@ class SensorSetup extends Component {
                 flex: 0.75
             }}>
                 <IOSPicker
-                  selectedValue={this.state.sensorType}
-                  style={[CommonStyles.inputField, {height: 50}]}
-                  onValueChange={(itemValue, itemIndex) => this.setState({sensorType: itemValue})}>
-                  {listTypes}
+                  selectedValue={this.state.sensorType ? this.state.sensorType.name : null }
+                  style={CommonStyles.inputField}
+                  onValueChange={(itemValue, itemIndex) => this.setState({sensorType: this.state.deviceTypes[itemIndex]})}>
+                  {/* {listTypes} */}
+                  <Picker.Item label='test' value='test' />
+                  <Picker.Item label='test2' value='test2' />
                 </IOSPicker>
                 {this.renderTextBoxes()}
             </View>
