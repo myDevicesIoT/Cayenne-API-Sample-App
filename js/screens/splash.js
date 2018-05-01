@@ -5,6 +5,7 @@ import {
 
 import StorageService from '../lib/storage.service';
 import PlatformService from '../lib/platform.service';
+import AuthService from '../lib/auth.service';
 
 import {
     Images
@@ -23,14 +24,12 @@ class Splash extends Component {
 
     async componentDidMount() {
         var token = await StorageService.get('access_token');
+        
         const { navigate } = this.props.navigation;
         if(token === null){
             this.props.navigation.navigate('CreateName');
-            //return <SCREENS.CreateName />;
         }else{
-            PlatformService.getThings().then(function(response) {
-                if (response.statusCode >= 400) return;
-                
+            return PlatformService.getThings().then(function(response) {
                 if (_.isEmpty(response)) return navigate('SensorSetup');
                 return navigate('Status');
             });

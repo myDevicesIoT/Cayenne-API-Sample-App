@@ -19,7 +19,7 @@ function request(requestInfo, requestInit){
                 .catch(() => {
                     // failed to get a new token
                     // navigating back to login screen:
-                    NavigatorService.navigate('Login');
+                    return NavigatorService.navigate('Login');
                 });
         }
         return response;

@@ -19,7 +19,7 @@ import {
   Header
 } from './../components/index';
 import {
-  PlatformService
+  PlatformService, AuthService
 } from './../lib/index';
 import { 
   Images
@@ -67,6 +67,7 @@ class SensorSetup extends Component {
     thing.name = sensorName;
     thing.device_type_id = this.state.sensorType.id;
     thing.hardware_id = hardwareId;
+    
 
     thing.properties = {
       codec: this.state.sensorType.codec,
@@ -81,10 +82,14 @@ class SensorSetup extends Component {
     thing.active = 1;
     thing.status = 'ACTIVATED';
 
-    Promise.all([
-      PlatformService.addThing(thing),
-      PlatformService.getTypeChannels(this.state.sensorType.id)
-    ]).then((result) => {
+    AuthService.getUser().then((user) => {
+        thing.user_id = user.id;
+    }).then(() => {
+      return Promise.all([
+        PlatformService.addThing(thing),
+        PlatformService.getTypeChannels(this.state.sensorType.id)
+      ])
+    }).then((result) => {
       let deviceId = result[0].id;
       promises = _.map(result[1], function(channel){
         return PlatformService.addThing({
@@ -92,7 +97,7 @@ class SensorSetup extends Component {
           parent_id: deviceId,
           active: 1,
           status: 'ACTIVATED',
-          device_type_id: channel.device_type_id,
+          device_type_id: '8f93f0f0-db59-44c1-aaa4-bd48707de97b',
           properties: {
             channel: channel.channel
           }
@@ -130,7 +135,7 @@ class SensorSetup extends Component {
     const {navigate} = this.props.navigation;
     var listTypes = this.state.deviceTypes.map(function(type) {
       return (
-        <Picker.Item label={type.name} value={type.id} key={type.id} />
+        <Picker.Item label={type.name} value={type} key={type.id} />
       );
     });
 

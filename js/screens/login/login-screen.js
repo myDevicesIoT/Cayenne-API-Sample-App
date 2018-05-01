@@ -24,7 +24,8 @@ import {
 } from './../../components/index';
 import {
     AuthService,
-    PlatformService
+    PlatformService,
+    StorageService
 } from './../../lib/index';
 import {
     Session,
@@ -56,14 +57,14 @@ class LoginScreen extends Component{
     componentDidMount() {
         if (Platform.OS === 'android') {
             Linking.getInitialURL().then(url => {
-                this.navigate(url);
+                //this.navigate(url);
             });
         } else Linking.addEventListener('url', this.handleOpenURL);
     }
 
-    componentWillUnmount() { Linking.removeEventListener('url', this.handleOpenURL); }
+    //componentWillUnmount() { Linking.removeEventListener('url', this.handleOpenURL); }
 
-    handleOpenURL = (event) => { this.navigate(event.url); }
+    //handleOpenURL = (event) => { this.props.navigation(event.url); }
 
     /**
      * Cayenne API Login using app id
@@ -102,12 +103,21 @@ class LoginScreen extends Component{
         var vm = this;
         const { navigate } = this.props.navigation;
 
-        PlatformService.createClient().then(function(response) {
-            if (_.isEmpty(response)) return;
-            Session.mqqt_id = response.id;
-            Session.mqqt_secret = response.clear_secret;
-
-            PlatformService.getThings().then(function(response) {
+        StorageService.get('mqtt_id').then((mqtt_id) => {
+            if(mqtt_id === null){
+                // get the user and create the client:
+                return AuthService.getUser().then((user) => {
+                    return PlatformService.createClient(user.id).then(function(response) {
+                        if (_.isEmpty(response)) return;
+                        StorageService.set('mqtt_id', response.id);
+                        StorageService.set('mqtt_secret', response.clear_secret);
+                        return true;
+                    });
+                });
+            }
+            return Promise.resolve([]);
+        }).then(() => {
+            return PlatformService.getThings().then(function(response) {
                 if (response.statusCode >= 400) return;
                 if (_.isEmpty(response)) return navigate('SensorSetup');
                 return navigate('Status');

@@ -1,5 +1,6 @@
 import settings from '../config/settings';
 import StorageService from './storage.service';
+import PlatformService from './platform.service';
 
 // Methods
 var Service = {
@@ -7,7 +8,8 @@ var Service = {
     refreshToken: refreshToken,
     forgotPassword: forgotPassword,
     getOauth: getOauth,
-    createUser: createUser
+    createUser: createUser,
+    getUser: getUser
 }
 
 /**
@@ -32,9 +34,12 @@ function getHeaders() {
 }
 
 function handleAuthResponse(data){
-    StorageService.set('access_token', data.access_token);
-    StorageService.set('refresh_token', data.refresh_token);
-    return data;
+    return Promise.all([
+        StorageService.set('access_token', data.access_token),
+        StorageService.set('refresh_token', data.refresh_token)
+    ]).then(() => {
+        return data;
+    })
 }
 
 /**
@@ -52,31 +57,31 @@ function getToken(email, password) {
             password: password,
             client_id: settings.appKey,
             client_secret: settings.appSecret,
-            grant_type: 'password',
+            grant_type: 'password'
         })
     })
     .then((response) => {
-        return response.json().then(handleAuthResponse);
+            return response.json().then(handleAuthResponse);
     });
 }
 
 function refreshToken(){
-    var refresh_token = StorageService.get('refresh_token');
-    if(!refresh_token) {
-        return Promise.reject('no refresh token');
-    }
-
-    return fetch(getHost() + 'oauth/token', {
-        method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify({
-            grant_type: 'refresh_token',
-            refresh_token: refresh_token
+    return StorageService.get('refresh_token').then((refresh_token) => {
+        if(!refresh_token) {
+            return Promise.reject('no refresh token');
+        }
+        return fetch(getHost() + 'oauth/token', {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({
+                grant_type: 'refresh_token',
+                refresh_token: refresh_token
+            })
         })
-    })
-    .then((response) => {
-        if(response.status !== 200) throw new Error("refresh failed");
-        return response.json().then(handleAuthResponse);
+        .then((response) => {
+            if(response.status !== 200) throw new Error("refresh failed");
+            return response.json().then(handleAuthResponse);
+        });
     });
 }
 
@@ -139,6 +144,21 @@ function createUser(email, password, firstName, lastName) {
             password,
             application_id: settings.appKey
         })
+    })
+    .then((response) => {
+        return response.json();
+    });
+}
+
+/**
+ * get the current user
+ */
+async function getUser() {
+    let headers = getHeaders();
+    headers.Authorization = `Bearer ${await StorageService.get('access_token')}`;
+    return fetch(getHost() + 'users/me', {
+        method: 'get',
+        headers: headers
     })
     .then((response) => {
         return response.json();
