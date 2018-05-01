@@ -31,7 +31,7 @@ class CreateName extends Component {
     render(){
         const {navigate} = this.props.navigation;
         return(
-            <Image style={ CommonStyles.backgroundImageContainer } source={ Images.loginSplash }>
+            <View style={ CommonStyles.backgroundImageContainer }>
                 <View style={{
                   flex: 1,
                   flexDirection: 'column',
@@ -69,7 +69,7 @@ class CreateName extends Component {
                           </View>
                     </TouchableOpacity>
                 </View>
-            </Image>
+            </View>
         );
     }
 }

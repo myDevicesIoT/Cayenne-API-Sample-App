@@ -33,10 +33,9 @@ export default StyleSheet.create({
     },
     backgroundImageContainer:{
         flex: 1,
-        resizeMode:'stretch',
         width: undefined,
         height: undefined,
-        backgroundColor: 'transparent',
+        backgroundColor: '#434A54',
         justifyContent: 'center'
     },
     modalText:{

@@ -76,7 +76,7 @@ class CreateEmail extends Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <Image style={ CommonStyles.backgroundImageContainer } source={ Images.loginSplash }>
+      <View style={ CommonStyles.backgroundImageContainer } >
         <View style={{
           flex: 1,
           flexDirection: 'column',
@@ -116,7 +116,7 @@ class CreateEmail extends Component {
               </View>
           </TouchableOpacity>
         </View>
-      </Image>
+      </View>
     )
   }
 }

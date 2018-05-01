@@ -118,7 +118,7 @@ class LoginScreen extends Component{
     render(){
         const {navigate} = this.props.navigation;
         return(
-                <Image style={CommonStyles.backgroundImageContainer} source={Images.loginSplash}>
+                <View style={CommonStyles.backgroundImageContainer}>
                     <ModalBox
                         onRequestClose={() => navigate('Login')}
                         isVisible={this.state.modalVisible}
@@ -134,12 +134,15 @@ class LoginScreen extends Component{
 
                         <TextBox
                             style={{height: 45}}
+                            autoCapitalize='none'
+                            returnKeyType={'next'}
                             onChangeText={(text) => this.setState({username: text})}
                             placeholder = 'Username'/>
                         <TextBox
                             style={{height: 45}}
                             onChangeText={(text) => this.setState({password: text})}
                             placeholder = 'Password'
+                            returnKeyType={'done'}
                             secureTextEntry={true}/>
 
                         <TouchButton
@@ -155,7 +158,7 @@ class LoginScreen extends Component{
                         </TouchableOpacity> */}
                     </View>
                     <View style={{flex:0.05}}/>
-                </Image>
+                </View>
         );
     }
 }

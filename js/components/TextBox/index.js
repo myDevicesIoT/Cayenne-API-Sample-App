@@ -11,6 +11,8 @@ function TextBox(props) {
             style={[styles.inputField, props.style]}
             underlineColorAndroid='rgba(0,0,0,0)'
             autoCorrect={false}
+            returnKeyType={props.returnKeyType}
+            autoCapitalize={props.autoCapitalize}
             secureTextEntry={props.secureTextEntry}
             onChangeText = {props.onChangeText}
             placeholder={props.placeholder} />
