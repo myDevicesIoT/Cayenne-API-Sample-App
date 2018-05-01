@@ -136,7 +136,7 @@ class SensorSetup extends Component {
     const {navigate} = this.props.navigation;
     var listTypes = this.state.deviceTypes.map(function(type) {
       return (
-        <Picker.Item label={type.name} value={type.id} key={value.id}/>
+        <Picker.Item label={type.name} value={type.id} key={type.id}/>
       );
     });
 
