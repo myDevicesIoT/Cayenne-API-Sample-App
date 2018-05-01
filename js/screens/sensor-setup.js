@@ -27,6 +27,7 @@ import {
 import _ from 'lodash';
 import Hr from 'react-native-hr';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IOSPicker from 'react-native-ios-picker';
 
 class SensorSetup extends Component {
   static navigationOptions = {header: null};
@@ -153,12 +154,12 @@ class SensorSetup extends Component {
             <View style={{
                 flex: 0.75
             }}>
-                <Picker
+                <IOSPicker
                   selectedValue={this.state.sensorType}
                   style={[CommonStyles.inputField, {height: 50}]}
                   onValueChange={(itemValue, itemIndex) => this.setState({sensorType: itemValue})}>
                   {listTypes}
-                </Picker>
+                </IOSPicker>
                 {this.renderTextBoxes()}
             </View>
 
