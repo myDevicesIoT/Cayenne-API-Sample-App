@@ -21,6 +21,9 @@ import {
 import {
   PlatformService, AuthService
 } from './../lib/index';
+import {
+  Settings
+} from './../../config/index';
 import { 
   Images
 } from './../config/index.js'
@@ -68,7 +71,7 @@ class SensorSetup extends Component {
     thing.name = sensorName;
     thing.device_type_id = this.state.sensorType.id;
     thing.hardware_id = hardwareId;
-    
+    thing.application_id = Settings.appKey;
 
     thing.properties = {
       codec: this.state.sensorType.codec,
