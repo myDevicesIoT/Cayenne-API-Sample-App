@@ -65,7 +65,7 @@ class SensorSetup extends Component {
 
     let thing = {};
     thing.name = sensorName;
-    thing.device_type_id = this.state.sensorType;
+    thing.device_type_id = this.state.sensorType.id;
     thing.hardware_id = hardwareId;
     
 
@@ -87,27 +87,27 @@ class SensorSetup extends Component {
     }).then(() => {
       return Promise.all([
         PlatformService.addThing(thing),
-        PlatformService.getTypeChannels(this.state.sensorType)
-      ]).then((result) => {
-        let deviceId = result[0].id;
-        promises = _.map(result[1], function(channel){
-          return PlatformService.addThing({
-            name: channel.name,
-            parent_id: deviceId,
-            active: 1,
-            status: 'ACTIVATED',
-            device_type_id: '8f93f0f0-db59-44c1-aaa4-bd48707de97b',
-            properties: {
-              channel: channel.channel
-            }
-          });
-        });
-  
-        return Promise.all(promises).then(() => {
-          return navigate('Status');
+        PlatformService.getTypeChannels(this.state.sensorType.id)
+      ])
+    }).then((result) => {
+      let deviceId = result[0].id;
+      promises = _.map(result[1], function(channel){
+        return PlatformService.addThing({
+          name: channel.name,
+          parent_id: deviceId,
+          active: 1,
+          status: 'ACTIVATED',
+          device_type_id: '8f93f0f0-db59-44c1-aaa4-bd48707de97b',
+          properties: {
+            channel: channel.channel
+          }
         });
       });
-    })
+
+      return Promise.all(promises).then(() => {
+        return navigate('Status');
+      });
+    });
   }
 
   handleInstruction = () => {
@@ -135,7 +135,7 @@ class SensorSetup extends Component {
     const {navigate} = this.props.navigation;
     var listTypes = this.state.deviceTypes.map(function(type) {
       return (
-        <Picker.Item label={type.name} value={type.id} key={type.id} />
+        <Picker.Item label={type.name} value={type} key={type.id} />
       );
     });
 
