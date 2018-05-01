@@ -1,5 +1,5 @@
 const images = {
-    loginSplash: require('../images/tankBg.jpg'),
+    loginSplash: require('../images/myDevices.jpg'),
     logo: require('../images/myDevicesWhite.png'),
     gatewaySetup: require('./../images/graphic-gateway-setup.png'),
     gatewayPlacement: require('./../images/graphic-gateway-placement.png'),

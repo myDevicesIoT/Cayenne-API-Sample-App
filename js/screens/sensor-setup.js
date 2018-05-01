@@ -156,11 +156,17 @@ class SensorSetup extends Component {
             }}>
                 <IOSPicker
                   selectedValue={this.state.sensorType ? this.state.sensorType.name : null }
-                  style={CommonStyles.inputField}
+                  style={{
+                    marginLeft:10,
+                    marginRight:10,
+                    marginTop:5,
+                    marginBottom:5,
+                    padding:15,
+                    borderRadius: 5,
+                    backgroundColor:'white'
+                }}
                   onValueChange={(itemValue, itemIndex) => this.setState({sensorType: this.state.deviceTypes[itemIndex]})}>
-                  {/* {listTypes} */}
-                  <Picker.Item label='test' value='test' />
-                  <Picker.Item label='test2' value='test2' />
+                  {listTypes}
                 </IOSPicker>
                 {this.renderTextBoxes()}
             </View>
