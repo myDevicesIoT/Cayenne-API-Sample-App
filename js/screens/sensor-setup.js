@@ -23,10 +23,8 @@ import {
 } from './../lib/index';
 import {
   Settings
-} from './../../config/index';
-import { 
-  Images
-} from './../config/index.js'
+} from './../config/index.js';
+
 import _ from 'lodash';
 import Hr from 'react-native-hr';
 import Icon from 'react-native-vector-icons/FontAwesome';
