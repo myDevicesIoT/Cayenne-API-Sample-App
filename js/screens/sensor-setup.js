@@ -137,7 +137,7 @@ class SensorSetup extends Component {
           if(ruleTemplate.triggers[0].query_type === 'state'){
             ruleTemplate.triggers[0].id = thing.id;
             ruleTemplate.title = 'Rule for ' + thing.name;
-            ruleTemplate.type = 'msm-cayenne-notification';
+            ruleTemplate.type = 'msm-cayenne-offline';
             notification.data.value_message = 'state changed';
           }else{
             let sensor = _.find(children, {properties: {channel: ruleTemplate.triggers[0].channel }});
