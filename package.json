@@ -11,9 +11,10 @@
     "react-native": "0.44.0",
     "react-native-deep-linking": "2.1.0",
     "react-native-hr": "^1.1.3",
+    "react-native-ios-picker": "^1.0.0",
     "react-native-mqtt": "github:rusfearuth/react-native-mqtt",
     "react-native-paho-mqtt": "0.0.8",
-    "react-native-svg-uri": "^1.2.0",
+    "react-native-svg-uri": "^1.2.3",
     "react-native-vector-icons": "^4.2.0",
     "react-navigation": "^1.0.0-beta.9"
   },
