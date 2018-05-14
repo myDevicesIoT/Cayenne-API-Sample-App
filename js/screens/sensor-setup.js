@@ -30,6 +30,7 @@ import _ from 'lodash';
 import Hr from 'react-native-hr';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IOSPicker from 'react-native-ios-picker';
+import DeviceInfo from 'react-native-device-info';
 
 class SensorSetup extends Component {
   static navigationOptions = {header: null};
@@ -126,7 +127,8 @@ class SensorSetup extends Component {
               "device_name" : thing.name,
               "connection_message ": "This is connected to " + thing.name,
               "device_type" : thingType.name,
-              "value_message": ruleTemplate.triggers[0].conditions[0].value
+              "value_message": ruleTemplate.triggers[0].conditions[0].value,
+              "date_timezone": DeviceInfo.getTimezone()
             },
             "value" : user.email,
             "method" : "email",
