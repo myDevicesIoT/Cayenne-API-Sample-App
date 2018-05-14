@@ -64,13 +64,14 @@ class SensorSetup extends Component {
     } = this.state;
 
     let thing = {};
+    let thingType = this.state.sensorType
     thing.name = sensorName;
-    thing.device_type_id = this.state.sensorType.id;
+    thing.device_type_id = thingType.id;
     thing.hardware_id = hardwareId;
     
 
     thing.properties = {
-      codec: this.state.sensorType.codec,
+      codec: thingType.codec,
       deveui: hardwareId,
       network: 'ttn',
       activation: 'activated',
@@ -115,31 +116,38 @@ class SensorSetup extends Component {
       return RulesService.getDeviceTypeRules(thing.device_type_id);
     }).then((deviceRules) => {
       var promises = _.map(deviceRules, function(ruleTemplate){
+        if(ruleTemplate.triggers.length > 0 && ruleTemplate.triggers[0].conditions.length > 0){
+          let notification = {
+            "data" : {
+              "owner" : user.first_name + ' ' + owner.last_name,
+              "device_name" : thing.name,
+              "connection_message ": "This is connected to " + thing.name,
+              "device_type" : thingType.name,
+              "value_message": ruleTemplate.triggers[0].conditions[0].value
+            },
+            "value" : user.email,
+            "method" : "email",
+            "type" : "msm-cayenne-notification",
+            "body" : null
+          };
 
-        let notification = {
-          "data" : {
-            "owner" : user.first_name + ' ' + owner.last_name,
-            "device_name" : thing.name,
-          },
-          "value" : user.email,
-          "method" : "email",
-          "type" : "msm-cayenne-notification",
-          "body" : null,
-        };
+          if(ruleTemplate.triggers[0].query_type === 'state'){
+            ruleTemplate.triggers[0].id = thing.id;
+            ruleTemplate.title = 'Rule for ' + thing.name;
+            ruleTemplate.type = 'msm-cayenne-notification';
+            notification.data.value_message = 'state changed';
+          }else{
+            let sensor = _.find(children, {properties: {channel: ruleTemplate.triggers[0].channel }});
+            ruleTemplate.triggers[0].id = sensor.id;
+            notification.data.sensor_name = sensor.name;
+            notification.data.connection_message = "This is connected to " + sensor.name;
+            ruleTemplate.title = 'Rule for ' + sensor.name;
+          }
 
-        if(ruleTemplate.triggers[0].query_type === 'state'){
-          ruleTemplate.triggers[0].id = thing.id;
-          ruleTemplate.title = 'Rule for ' + thing.name;
-        }else{
-          let sensor = _.find(children, {properties: {channel: ruleTemplate.triggers[0].channel }});
-          ruleTemplate.triggers[0].id = sensor.id;
-          notification.data.sensor_name = sensor.name;
-          ruleTemplate.title = 'Rule for ' + sensor.name;
+          if(!ruleTemplate.notifications) ruleTemplate.notifications = [];
+          ruleTemplate.notifications.push(notification);
+          return RulesService.setRule(ruleTemplate);
         }
-
-        if(!ruleTemplate.notifications) ruleTemplate.notifications = [];
-        ruleTemplate.notifications.push(notification);
-        return RulesService.setRule(ruleTemplate);
       });
       return Promise.all(promises);
     }).then(() => {
