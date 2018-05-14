@@ -21,12 +21,15 @@ import {
 import {
   PlatformService, AuthService, RulesService
 } from './../lib/index';
-import { 
+import {
+  Settings,
   Images
-} from './../config/index.js'
+} from './../config/index.js';
+
 import _ from 'lodash';
 import Hr from 'react-native-hr';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IOSPicker from 'react-native-ios-picker';
 
 class SensorSetup extends Component {
   static navigationOptions = {header: null};
@@ -68,7 +71,7 @@ class SensorSetup extends Component {
     thing.name = sensorName;
     thing.device_type_id = thingType.id;
     thing.hardware_id = hardwareId;
-    
+    thing.application_id = Settings.appKey;
 
     thing.properties = {
       codec: thingType.codec,
@@ -94,7 +97,7 @@ class SensorSetup extends Component {
       return Promise.all([
         PlatformService.addThing(thing),
         PlatformService.getTypeChannels(this.state.sensorType.id)
-      ])
+      ]);
     }).then((result) => {
       thing.id = result[0].id;
       promises = _.map(result[1], function(channel){
@@ -180,7 +183,7 @@ class SensorSetup extends Component {
     const {navigate} = this.props.navigation;
     var listTypes = this.state.deviceTypes.map(function(type) {
       return (
-        <Picker.Item label={type.name} value={type} key={type.id} />
+        <Picker.Item label={type.name} value={type.id} key={type.id}/>
       );
     });
 
@@ -198,12 +201,20 @@ class SensorSetup extends Component {
             <View style={{
                 flex: 0.75
             }}>
-                <Picker
-                  selectedValue={this.state.sensorType}
-                  style={[CommonStyles.inputField, {height: 50}]}
-                  onValueChange={(itemValue, itemIndex) => this.setState({sensorType: itemValue})}>
+                <IOSPicker
+                  selectedValue={this.state.sensorType ? this.state.sensorType.name : null }
+                  style={{
+                    marginLeft:10,
+                    marginRight:10,
+                    marginTop:5,
+                    marginBottom:5,
+                    padding:15,
+                    borderRadius: 5,
+                    backgroundColor:'white'
+                }}
+                  onValueChange={(itemValue, itemIndex) => this.setState({sensorType: this.state.deviceTypes[itemIndex]})}>
                   {listTypes}
-                </Picker>
+                </IOSPicker>
                 {this.renderTextBoxes()}
             </View>
 
