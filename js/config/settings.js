@@ -5,7 +5,8 @@ import {
     AUTH_HOST,
     API_HOST,
     STREAMING_HOST,
-    HISTORY_HOST
+    HISTORY_HOST,
+    RULES_HOST
 } from 'react-native-dotenv';
 
 const settings = {
@@ -15,7 +16,8 @@ const settings = {
     guid: guid,
     apiHost: API_HOST,
     streamingHost: STREAMING_HOST,
-    historyHost: HISTORY_HOST
+    historyHost: HISTORY_HOST,
+    rulesHost: RULES_HOST
 }
 
 /**
