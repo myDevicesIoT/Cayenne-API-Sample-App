@@ -1,4 +1,13 @@
-# Cayenne Cloud API Sample App
+# Deprecated.
+
+### Please visit [mydevices.com](https://mydevices.com) and our [docs](https://docs.mydevices.com) page for more information and new APIs on how to build applications with myDevices. 
+
+
+---
+
+
+
+#### Cayenne Cloud API Sample App
 
 This repo contains a sample app walking through the Authentication process along with device pre-provisioning. 
 
